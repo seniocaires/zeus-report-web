@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:p="http://primefaces.org/ui"
+		xmlns:f="http://java.sun.com/jsf/core">
+
+	<ui:composition template="/template/principal.xhtml">
+
+		<ui:define name="conteudo">
+
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">
+						<h:outputText value="#{mensagem.relatorio}"/>
+					</h1>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-9">
+
+					<h:panelGroup layout="block" rendered="#{managedBean.exibirRelatorio}" styleClass="panel panel-default">
+						<div class="panel-heading">
+							<h:outputText value="#{managedBean.usuario.nome}"/>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-lg-12">
+									<h:panelGroup id="relatorio" styleClass="table-responsive">
+										<p:dataTable id="dataTableRelatorio" value="#{managedBean.usuario.registros}" var="registro" paginator="false" tableStyleClass="table table-striped table-bordered table-hover tabelaRelatorio">
+											<p:columnGroup type="header">
+												<p:row>
+													<p:column rowspan="2" headerText="#{mensagem.data}" />
+													<p:column colspan="4" headerText="#{mensagem.horarioNormal}" />
+													<p:column colspan="2" headerText="#{mensagem.horarioAdicional}" />
+													<p:column rowspan="2" headerText="#{mensagem.totalDia}" />
+													<p:column rowspan="2" headerText="#{mensagem.previsto}" />
+													<p:column rowspan="2" headerText="#{mensagem.saldoDia}" />
+													<p:column rowspan="2" headerText="#{mensagem.acumulado}" />
+												</p:row>
+												<p:row>
+													<p:column headerText="#{mensagem.entrada}" />
+													<p:column headerText="#{mensagem.saida}" />
+													<p:column headerText="#{mensagem.entrada}" />
+													<p:column headerText="#{mensagem.saida}" />
+													<p:column headerText="#{mensagem.entrada}" />
+													<p:column headerText="#{mensagem.saida}" />
+												</p:row>
+											</p:columnGroup>
+											<p:column styleClass="text-left">
+												<h:outputText value="#{registro.diaSemana}, #{registro.dataFormatada}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.horario1}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.horario2}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.horario3}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.horario4}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.horario5}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.horario6}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.totalDia}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.horasPrevistas}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.saldoDia}" rendered="#{registro.saldoDiaPositivo}" styleClass="positivo"/>
+												<h:outputText value="#{registro.saldoDia}" rendered="#{registro.saldoDiaNegativo}" styleClass="negativo"/>
+												<h:outputText value="#{registro.saldoDia}" rendered="#{!registro.saldoDiaPositivo and !registro.saldoDiaNegativo}"/>
+											</p:column>
+											<p:column styleClass="text-right">
+												<h:outputText value="#{registro.saldoAcumulado}" rendered="#{registro.saldoAcumuladoPositivo}" styleClass="positivo"/>
+												<h:outputText value="#{registro.saldoAcumulado}" rendered="#{registro.saldoAcumuladoNegativo}" styleClass="negativo"/>
+												<h:outputText value="#{registro.saldoAcumulado}" rendered="#{!registro.saldoAcumuladoPositivo and !registro.saldoAcumuladoNegativo}"/>
+											</p:column>
+										</p:dataTable>
+									</h:panelGroup>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-12">
+									<h:outputText value="#{mensagem.totalPrevisto}: " styleClass="negrito"/>
+									<h:outputText value="#{managedBean.totalHorasPrevistas}"/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-12">
+									<h:outputText value="#{mensagem.totalRealizado}: " styleClass="negrito"/>
+									<h:outputText value="#{managedBean.totalHorasRealizadas}"/>
+								</div>
+							</div>
+
+						</div>
+
+					</h:panelGroup>
+
+				</div>
+				<div class="col-lg-3">
+
+					<div class="row">
+						<div class="col-lg-12 col-md-6">
+							<p:commandButton action="#{managedBean.gerarRelatorio}" value="#{mensagem.gerarRelatorio}" update="formulario" styleClass="btn btn-success btn-block" onclick="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"/>
+						</div>
+					</div>
+
+					<p:spacer height="4"/>
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h:outputText value="#{mensagem.dadosAcessoZeus}"/>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label><h:outputText value="#{mensagem.login}"/></label>
+										<p:inputText value="#{managedBean.usuario.login}" placeholder="#{mensagem.loginAjuda}" styleClass="form-control"/>
+									</div>
+									<div class="form-group">
+										<label><h:outputText value="#{mensagem.senha}"/></label>
+										<p:password value="#{managedBean.usuario.senha}" placeholder="#{mensagem.senhaAjuda}" styleClass="form-control"/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h:outputText value="#{mensagem.datasPrevistas}"/>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label for="disabledSelect">
+											<h:outputText value="#{mensagem.perfil}"/>
+										</label>
+										<select id="disabledSelect" class="form-control">
+											<option>PMMG</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="formulario:mes">
+											<h:outputText value="#{mensagem.mes}"/>
+										</label>
+										<h:selectOneMenu id="mes" value="#{managedBean.mes}" styleClass="form-control">
+											<f:selectItems value="#{managedBean.meses}"/>
+										</h:selectOneMenu>
+									</div>
+									<div class="form-group">
+										<h:selectOneRadio value="#{managedBean.ano}" layout="lineDirection">
+											<f:selectItem  itemValue="#{managedBean.anoAtual}" itemLabel="#{managedBean.anoAtual}&#160;"/>
+											<f:selectItem itemValue="#{managedBean.anoAnterior}" itemLabel="#{managedBean.anoAnterior}"/>
+										</h:selectOneRadio>
+									</div>
+									<div class="form-group">
+										<p:commandButton action="#{managedBean.gerarDatasPrevistas}" value="#{mensagem.gerarDatasPrevistas}" update="datasPrevistas" styleClass="btn btn-primary" onclick="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"/>
+									</div>
+									<h:panelGroup id="datasPrevistas" styleClass="table-responsive">
+										<p:dataTable id="dataTableDatasPrevistas" value="#{managedBean.previstos}" var="previsto" rendered="#{managedBean.exibirPrevistos}" paginator="false" tableStyleClass="table table-striped table-bordered table-hover">
+											<p:column styleClass="text-left">
+												<h:outputText value="#{previsto.diaSemana}, #{previsto.dataFormatada}"/>
+											</p:column>
+											<p:column styleClass="text-right" width="25%">
+												<h:outputText value="#{previsto.horas}"/>
+											</p:column>
+											<p:column width="52">
+												<p:commandButton actionListener="#{managedBean.removerPrevisto(previsto)}" ajax="true" icon="ui-icon-close" update="formulario:datasPrevistas" onclick="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"/>
+											</p:column>
+										</p:dataTable>
+									</h:panelGroup>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-lg-12 col-md-6">
+							<p:commandButton action="#{managedBean.gerarRelatorio}" value="#{mensagem.gerarRelatorio}" update="formulario" styleClass="btn btn-success btn-block" onclick="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"/>
+						</div>
+					</div>
+
+					<p:spacer height="4"/>
+
+				</div>
+			</div>
+
+		</ui:define>
+
+	</ui:composition>
+
+</html>

@@ -1,0 +1,21 @@
+.negrito {
+	font-weight: bolder;
+}
+.alinhamentoEsquerda {
+	text-align: left;
+}
+.alinhamentoDireita {
+	text-align: right;
+}
+.alinhamentoCentro {
+	text-align: center;
+}
+.tabelaRelatorio {
+	font-size: 13px;
+}
+.positivo {
+	color: blue;
+}
+.negativo {
+	color: red;
+}
