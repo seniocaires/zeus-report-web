@@ -31,12 +31,28 @@ public class Registro {
 	 */
 	private List<String> horarios;
 
+	/**
+	 * Horas previstas para a data.
+	 * @author Senio Caires
+	 */
 	private String horasPrevistas = "00:00";
 
+	/**
+	 * Total de horas realizadas na data.
+	 * @author Senio Caires
+	 */
 	private String totalDia = "00:00";
 
+	/**
+	 * Saldo de horas da data.
+	 * @author Senio Caires
+	 */
 	private String saldoDia = "00:00";
 
+	/**
+	 * Saldo acumulado até a data.
+	 * @author Senio Caires
+	 */
 	private String saldoAcumulado = "00:00";
 
 	/**
@@ -146,7 +162,13 @@ public class Registro {
 		this.horarios = horariosParametro;
 	}
 
-	private String getHorario(int horario) {
+	/**
+	 * Retorna o horário de acordo com o número passado por parâmetro.
+	 * @author Senio Caires
+	 * @param horario
+	 * @return {@link String}
+	 */
+	private final String getHorario(int horario) {
 
 		String retorno = null;
 
@@ -159,27 +181,57 @@ public class Registro {
 		return retorno;
 	}
 
-	public String getHorario1() {
+	/**
+	 * Retorna a primeira posição da lista de horários.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getHorario1() {
 		return getHorario(0);
 	}
 
-	public String getHorario2() {
+	/**
+	 * Retorna a segunda posição da lista de horários.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getHorario2() {
 		return getHorario(1);
 	}
 
-	public String getHorario3() {
+	/**
+	 * Retorna a terceira posição da lista de horários.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getHorario3() {
 		return getHorario(2);
 	}
 
-	public String getHorario4() {
+	/**
+	 * Retorna a quarta posição da lista de horários.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getHorario4() {
 		return getHorario(3);
 	}
 
-	public String getHorario5() {
+	/**
+	 * Retorna a quinta posição da lista de horários.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getHorario5() {
 		return getHorario(4);
 	}
 
-	public String getHorario6() {
+	/**
+	 * Retorna a sexta posição da lista de horários.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getHorario6() {
 		return getHorario(5);
 	}
 
@@ -199,55 +251,121 @@ public class Registro {
 		return resultado;
 	}
 
-	public Boolean getSaldoDiaPositivo() {
+	/**
+	 * Informa se o saldo do dia foi positivo.
+	 * @author Senio Caires
+	 * @return {@link Boolean}
+	 */
+	public final Boolean getSaldoDiaPositivo() {
 		return getSaldoDia().contains("+");
 	}
 
-	public Boolean getSaldoDiaNegativo() {
+	/**
+	 * Informa se o saldo do dia foi negativo.
+	 * @author Senio Caires
+	 * @return {@link Boolean}
+	 */
+	public final Boolean getSaldoDiaNegativo() {
 		return getSaldoDia().contains("-");
 	}
 
-	public Boolean getSaldoAcumuladoPositivo() {
+	/**
+	 * Informa se o saldo acumulado foi positivo.
+	 * @author Senio Caires
+	 * @return {@link Boolean}
+	 */
+	public final Boolean getSaldoAcumuladoPositivo() {
 		return getSaldoAcumulado().contains("+");
 	}
 
-	public Boolean getSaldoAcumuladoNegativo() {
+	/**
+	 * Informa se o saldo acumulado foi negativo.
+	 * @author Senio Caires
+	 * @return {@link Boolean}
+	 */
+	public final Boolean getSaldoAcumuladoNegativo() {
 		return getSaldoAcumulado().contains("-");
 	}
 
-	public String getTotalDiaNaoVazio() {
+	/**
+	 * Retorna o total do dia.</br>
+	 * Se estiver vazio, retorna 00:00
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getTotalDiaNaoVazio() {
 		return getTotalDia() == null || "".equals(getTotalDia()) ? "00:00" : getTotalDia();
 	}
 
-	public String getTotalDia() {
+	/**
+	 * Retorna o total do dia.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getTotalDia() {
 		return totalDia;
 	}
 
-	public void setTotalDia(String totalDia) {
+	/**
+	 * Altera o total do dia.
+	 * @author Senio Caires
+	 * @param totalDia
+	 */
+	public final void setTotalDia(final String totalDia) {
 		this.totalDia = totalDia;
 	}
 
-	public String getSaldoDia() {
+	/**
+	 * Retorna o saldo do dia.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getSaldoDia() {
 		return saldoDia;
 	}
 
-	public void setSaldoDia(String saldoDia) {
+	/**
+	 * Altera o saldo do dia.
+	 * @author Senio Caires
+	 * @param saldoDia
+	 */
+	public final void setSaldoDia(final String saldoDia) {
 		this.saldoDia = saldoDia;
 	}
 
-	public String getSaldoAcumulado() {
+	/**
+	 * Retorna o saldo acumulado.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getSaldoAcumulado() {
 		return saldoAcumulado;
 	}
 
-	public void setSaldoAcumulado(String saldoAcumulado) {
+	/**
+	 * Altera o saldo acumulado.
+	 * @author Senio Caires
+	 * @param saldoAcumulado
+	 */
+	public final void setSaldoAcumulado(final String saldoAcumulado) {
 		this.saldoAcumulado = saldoAcumulado;
 	}
 
-	public String getHorasPrevistas() {
+	/**
+	 * Retorna as horas previstas.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	public final String getHorasPrevistas() {
 		return horasPrevistas;
 	}
 
-	public void setHorasPrevistas(String horasPrevistas) {
+	/**
+	 * Altera as horas previstas.
+	 * @author Senio Caires
+	 * @param horasPrevistas
+	 */
+	public final void setHorasPrevistas(final String horasPrevistas) {
 		this.horasPrevistas = horasPrevistas;
 	}
 }

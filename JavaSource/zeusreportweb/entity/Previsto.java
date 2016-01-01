@@ -23,6 +23,12 @@ public class Previsto {
 	 */
 	private String horas;
 
+	/**
+	 * Construtor para criar um novo objeto preenchedo todos os seus atributos.
+	 * @author Senio Caires
+	 * @param data
+	 * @param horas
+	 */
 	public Previsto(Date data, String horas) {
 		this.data = data;
 		this.horas = horas;
@@ -83,11 +89,19 @@ public class Previsto {
 		return horas;
 	}
 
+	/**
+	 * Retorna a representação em String.
+	 * @author Senio Caires
+	 */
 	@Override
 	public String toString() {
 		return getDataFormatada();
 	}
 
+	/**
+	 * Retorna o HashCode.
+	 * @author Senio Caires
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -96,6 +110,10 @@ public class Previsto {
 		return result;
 	}
 
+	/**
+	 * Comparação.
+	 * @author Senio Caires
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

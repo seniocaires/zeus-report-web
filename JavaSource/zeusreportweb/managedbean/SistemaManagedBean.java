@@ -59,14 +59,34 @@ public class SistemaManagedBean {
 	 */
 	private Usuario usuario;
 
+	/**
+	 * Data/horas previstas.
+	 * @author Senio Caires
+	 */
 	private List<Previsto> previstos;
 
+	/**
+	 * Mês para gerar as datas previstas.
+	 * @author Senio Caires
+	 */
 	private String mes;
 
+	/**
+	 * Ano para gerar as datas previstas.
+	 * @author Senio Caires
+	 */
 	private Integer ano;
 
+	/**
+	 * Url do relatório.
+	 * @author Senio Caires
+	 */
 	private String urlRelatorio;
 
+	/**
+	 * Inicializar o managed bean.
+	 * @author Senio Caires
+	 */
 	@PostConstruct
 	public void init() {
 
@@ -74,8 +94,10 @@ public class SistemaManagedBean {
 
 		try {
 			setAno(Integer.valueOf(getCookie("ano").getValue()));
+			setMes(getCookie("mes").getValue());
 		} catch (NumberFormatException excecao) {
 			setAno(getAnoAtual());
+			setMes(DataUtil.getMesPorExtenso(getMesAtual()));
 		}
 
 		Gson gson = new Gson();
@@ -83,11 +105,17 @@ public class SistemaManagedBean {
 		this.previstos = gson.fromJson(getCookie("previstos").getValue(), PREVISTO_TYPE);
 	}
 
+	/**
+	 * Salvar os dados em cookies.
+	 * @author Senio Caires
+	 */
 	private void salvarCookies() {
 
 		setCookie("login", getUsuario().getLogin(), -1);
 
 		setCookie("ano", getAno().toString(), -1);
+
+		setCookie("mes", getMes(), -1);
 
 		Gson gson = new Gson();
 		setCookie("previstos", gson.toJson(getPrevistos(), PREVISTO_TYPE), -1);
@@ -177,11 +205,11 @@ public class SistemaManagedBean {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				JSFHelper.addGlobalMessageError("", e.getMessage());
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			JSFHelper.addGlobalMessageError("", e.getMessage());
 		}
 	}
 
@@ -251,7 +279,7 @@ public class SistemaManagedBean {
 			diferencaDias = diferenca / (24 * 60 * 60 * 1000);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			JSFHelper.addGlobalMessageError("", e.getMessage());
 		}
 
 		return ManipulacaoUtil.adicionarChar('0', 2, String.valueOf(diferencaHoras), true) + ":" + ManipulacaoUtil.adicionarChar('0', 2, String.valueOf(diferencaoMinutos), true);
@@ -531,6 +559,9 @@ public class SistemaManagedBean {
 		return ManipulacaoUtil.adicionarChar('0', digitosHora, String.valueOf(totalHoras), true) + ":" + ManipulacaoUtil.adicionarChar('0', 2, String.valueOf(totalMinutos), true);
 	}
 
+	/**
+	 * @author Senio Caires
+	 */
 	public void gerarDatasPrevistas() {
 
 		Calendar calendar = Calendar.getInstance();
@@ -557,48 +588,59 @@ public class SistemaManagedBean {
 		salvarCookies();
 	}
 
-	public void setCookie(String name, String value, int expiry) {
+	/**
+	 * @author Senio Caires
+	 * @param nome
+	 * @param valor
+	 * @param expiracao
+	 */
+	public void setCookie(String nome, String valor, int expiracao) {
 
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 
 		HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
 		Cookie cookie = null;
 
-		Cookie[] userCookies = request.getCookies();
-		if (userCookies != null && userCookies.length > 0 ) {
-			for (int i = 0; i < userCookies.length; i++) {
-				if (userCookies[i].getName().equals(name)) {
-					cookie = userCookies[i];
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null && cookies.length > 0 ) {
+			for (int indice = 0; indice < cookies.length; indice++) {
+				if (cookies[indice].getName().equals(nome)) {
+					cookie = cookies[indice];
 					break;
 				}
 			}
 		}
 
 		if (cookie != null) {
-			cookie.setValue(value);
+			cookie.setValue(valor);
 		} else {
-			cookie = new Cookie(name, value);
+			cookie = new Cookie(nome, valor);
 			cookie.setPath(request.getContextPath());
 		}
 
-		cookie.setMaxAge(expiry);
+		cookie.setMaxAge(expiracao);
 
 		HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 		response.addCookie(cookie);
 	}
 
-	public Cookie getCookie(String name) {
+	/**
+	 * @author Senio Caires
+	 * @param nome
+	 * @return {@link Cookie}
+	 */
+	public Cookie getCookie(String nome) {
 
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 
 		HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-		Cookie cookie = new Cookie(name, "");
+		Cookie cookie = new Cookie(nome, "");
 
-		Cookie[] userCookies = request.getCookies();
-		if (userCookies != null && userCookies.length > 0 ) {
-			for (int i = 0; i < userCookies.length; i++) {
-				if (userCookies[i].getName().equals(name)) {
-					cookie = userCookies[i];
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null && cookies.length > 0 ) {
+			for (int indice = 0; indice < cookies.length; indice++) {
+				if (cookies[indice].getName().equals(nome)) {
+					cookie = cookies[indice];
 					return cookie;
 				}
 			}
@@ -607,6 +649,10 @@ public class SistemaManagedBean {
 		return cookie;
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @param previsto
+	 */
 	public void removerPrevisto(Previsto previsto) {
 
 		getPrevistos().remove(previsto);
@@ -746,10 +792,18 @@ public class SistemaManagedBean {
 		this.usuario = usuario;
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @return {@link List}<{@link String}>
+	 */
 	public List<String> getMeses() {
 		return DataUtil.mesPorExtensoList();
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @return {@link List}<{@link Previsto}>
+	 */
 	public List<Previsto> getPrevistos() {
 
 		if (previstos == null) {
@@ -759,18 +813,34 @@ public class SistemaManagedBean {
 		return previstos;
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @param previstos
+	 */
 	public void setPrevistos(List<Previsto> previstos) {
 		this.previstos = previstos;
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @return {@link Boolean}
+	 */
 	public Boolean getExibirRelatorio() {
 		return !getUsuario().getRegistros().isEmpty();
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @return {@link Boolean}
+	 */
 	public Boolean getExibirPrevistos() {
 		return !getPrevistos().isEmpty();
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
 	public String getMes() {
 
 		if (mes == null) {
@@ -784,14 +854,26 @@ public class SistemaManagedBean {
 		return mes;
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @param mes
+	 */
 	public void setMes(String mes) {
 		this.mes = mes;
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
 	public String getUrlRelatorio() {
 		return urlRelatorio + "?" + getUsuario().getCodigo() + "," + getDataInicialFormatadaParametroRelatorio() + "," + getDataFinalFormatadaParametroRelatorio();
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @param urlRelatorioParametro
+	 */
 	public void setUrlRelatorio(String urlRelatorioParametro) {
 
 		String[] urlPartes = urlRelatorioParametro.split("\\?");
@@ -872,16 +954,39 @@ public class SistemaManagedBean {
 		return retorno.toString();
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @return {@link Integer}
+	 */
 	public Integer getAnoAtual() {
 		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(DataUtil.getDataAtual());
 		return calendar.get(Calendar.YEAR);
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @return {@link Integer}
+	 */
+	public Integer getMesAtual() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(DataUtil.getDataAtual());
+		return calendar.get(Calendar.MONTH) + 1;
+	}
+
+	/**
+	 * @author Senio Caires
+	 * @return {@link Integer}
+	 */
 	public Integer getAnoAnterior() {
 		Calendar calendar = Calendar.getInstance();
 		return calendar.get(Calendar.YEAR) - 1;
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @return {@link Integer}
+	 */
 	public Integer getAno() {
 
 		if (ano == null) {
@@ -891,6 +996,10 @@ public class SistemaManagedBean {
 		return ano;
 	}
 
+	/**
+	 * @author Senio Caires
+	 * @param ano
+	 */
 	public void setAno(Integer ano) {
 		this.ano = ano;
 	}

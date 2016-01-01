@@ -33,8 +33,6 @@ public class Usuario {
 	 */
 	private String senha;
 
-	private String urlRelatorio;
-
 	/**
 	 * Lista de registros de ponto do usuário.
 	 * @author Senio Caires
