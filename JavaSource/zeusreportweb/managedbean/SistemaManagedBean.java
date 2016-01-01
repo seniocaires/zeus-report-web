@@ -103,6 +103,7 @@ public class SistemaManagedBean {
 			acessarZeus();
 		} catch (ProjetoException excecao) {
 			JSFHelper.addGlobalMessageError("", excecao.getMessage());
+			return;
 		}
 
 		try {
