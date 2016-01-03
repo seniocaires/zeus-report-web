@@ -152,7 +152,7 @@ public class SistemaManagedBean implements Serializable {
 	 * Retorna o maior horário da lista de previsto e realizado.</br>
 	 * Usado para gráfico.
 	 * @author Senio Caires
-	 * @return {@link String}
+	 * @return {@link Float}
 	 */
 	private Float getMaiorHorario() {
 
