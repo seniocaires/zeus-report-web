@@ -1,5 +1,6 @@
 package zeusreportweb.entity;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -9,7 +10,13 @@ import com.sporeon.baseutil.DataUtil;
  * Entidade para representar as datas previstas.
  * @author Senio Caires
  */
-public class Previsto {
+public class Previsto implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 * @author Senio Caires
+	 */
+	private static final long serialVersionUID = 6559091717689994632L;
 
 	/**
 	 * Data formatada.

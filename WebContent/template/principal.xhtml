@@ -64,11 +64,19 @@
 					<div id="page-wrapper">
 						<p:growl id="growl" showDetail="true" />
 						<ui:insert name="conteudo"/>
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="panel-body">
+									<a href="https://github.com/seniocaires/zeus-report-web" target="_blank" class="btn btn-block btn-social btn-github">
+										<i class="fa fa-github"></i>#{mensagem.codigoFonte}
+									</a>
+								</div>
+							</div>
+						</div>
 					</div>
 
 				</h:panelGroup>
 
-				<script src="/zeus-report-web/tema/bower_components/jquery/dist/jquery.min.js"></script>
 				<script src="/zeus-report-web/tema/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 				<script src="/zeus-report-web/tema/bower_components/metisMenu/dist/metisMenu.min.js"></script>
 				<script src="/zeus-report-web/tema/dist/js/sb-admin-2.js"></script>

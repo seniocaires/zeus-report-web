@@ -1,6 +1,7 @@
 package zeusreportweb.managedbean;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,6 +18,12 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.DateAxis;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.LineChartSeries;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -45,7 +52,13 @@ import zeusreportweb.exception.ProjetoException;
  */
 @ViewScoped
 @ManagedBean(name = "managedBean")
-public class SistemaManagedBean {
+public class SistemaManagedBean implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 * @author Senio Caires
+	 */
+	private static final long serialVersionUID = -3593184308580139798L;
 
 	/**
 	 * Type para lista de previstos.
@@ -84,6 +97,12 @@ public class SistemaManagedBean {
 	private String urlRelatorio;
 
 	/**
+	 * Gráfico de linha.
+	 * @author Senio Caires
+	 */
+	private LineChartModel graficoLinha;
+
+	/**
 	 * Inicializar o managed bean.
 	 * @author Senio Caires
 	 */
@@ -103,6 +122,79 @@ public class SistemaManagedBean {
 		Gson gson = new Gson();
 
 		this.previstos = gson.fromJson(getCookie("previstos").getValue(), PREVISTO_TYPE);
+	}
+
+	/**
+	 * Cria o gráfico de linha.
+	 * @author Senio Caires
+	 */
+	private void criarGraficoLinha() {
+
+		graficoLinha = preencherDadosGraficoLinha();
+		graficoLinha.setTitle("Previsto / Realizado");
+		graficoLinha.setLegendPosition("e");
+		graficoLinha.setAnimate(true);
+
+		Axis eixoY = graficoLinha.getAxis(AxisType.Y);
+		eixoY.setTickFormat(" ");
+		eixoY.setMin(0);
+		eixoY.setMax(getMaiorHorario() + 2);
+
+		DateAxis eixoX = new DateAxis();
+		eixoX.setTickAngle(90);
+		eixoX.setMin(DataUtil.dateParaString(getDataInicial(), "yyyy-MM-dd"));
+		eixoX.setMax(DataUtil.dateParaString(getDataFinal(), "yyyy-MM-dd"));
+		eixoX.setTickFormat("%d/%m/%y");
+		graficoLinha.getAxes().put(AxisType.X, eixoX);
+	}
+
+	/**
+	 * Retorna o maior horário da lista de previsto e realizado.</br>
+	 * Usado para gráfico.
+	 * @author Senio Caires
+	 * @return {@link String}
+	 */
+	private Float getMaiorHorario() {
+
+		Float retorno = 0.0F;
+
+		for (Registro registro : getUsuario().getRegistros()) {
+			if (retorno < Float.valueOf(registro.getTotalDiaNaoVazio().replace(":", "."))) {
+				retorno = Float.valueOf(registro.getTotalDiaNaoVazio().replace(":", "."));
+			}
+			if (retorno < Float.valueOf(registro.getHorasPrevistas().replace(":", "."))) {
+				retorno = Float.valueOf(registro.getHorasPrevistas().replace(":", "."));
+			}
+		}
+
+		return retorno;
+	}
+
+	/**
+	 * Preenche os dados do gráfico de linha.
+	 * @author Senio Caires 
+	 * @return {@link LineChartModel}
+	 */
+	private LineChartModel preencherDadosGraficoLinha() {
+
+		LineChartModel modelo = new LineChartModel();
+
+		LineChartSeries previsto = new LineChartSeries();
+		LineChartSeries realizado = new LineChartSeries();
+		realizado.setFill(true);
+		previsto.setLabel("Previsto");
+		realizado.setLabel("Realizado");
+
+		for (Registro registro : getUsuario().getRegistros()) {
+
+			realizado.set(DataUtil.dateParaString(registro.getData(), "yyyy-MM-dd"), Float.valueOf(registro.getTotalDiaNaoVazio().replace(":", ".")));
+			previsto.set(DataUtil.dateParaString(registro.getData(), "yyyy-MM-dd"), Float.valueOf(registro.getHorasPrevistas().replace(":", ".")));
+		}
+
+		modelo.addSeries(realizado);
+		modelo.addSeries(previsto);
+
+		return modelo;
 	}
 
 	/**
@@ -211,6 +303,8 @@ public class SistemaManagedBean {
 		} catch (IOException e) {
 			JSFHelper.addGlobalMessageError("", e.getMessage());
 		}
+
+		criarGraficoLinha();
 	}
 
 	/**
@@ -1002,5 +1096,21 @@ public class SistemaManagedBean {
 	 */
 	public void setAno(Integer ano) {
 		this.ano = ano;
+	}
+
+	/**
+	 * @author Senio Caires
+	 * @return {@link LineChartModel}
+	 */
+	public LineChartModel getGraficoLinha() {
+		return graficoLinha;
+	}
+
+	/**
+	 * @author Senio Caires
+	 * @param graficoLinha
+	 */
+	public void setGraficoLinha(LineChartModel graficoLinha) {
+		this.graficoLinha = graficoLinha;
 	}
 }

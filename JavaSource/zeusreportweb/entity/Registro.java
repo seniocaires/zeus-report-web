@@ -1,5 +1,6 @@
 package zeusreportweb.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,7 +12,13 @@ import com.sporeon.baseutil.DataUtil;
  * Entidade para representar os registros de ponto dos usuários do Zeus.
  * @author Senio Caires
  */
-public class Registro {
+public class Registro implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 * @author Senio Caires
+	 */
+	private static final long serialVersionUID = 4212806691511394634L;
 
 	/**
 	 * Dono do registro de ponto.

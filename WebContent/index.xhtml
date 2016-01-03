@@ -23,83 +23,103 @@
 					<h:panelGroup layout="block" rendered="#{managedBean.exibirRelatorio}" styleClass="panel panel-default">
 						<div class="panel-heading">
 							<h:outputText value="#{managedBean.usuario.nome}"/>
+							<p:spacer width="15"/>
+							<h:outputText value="#{mensagem.totalPrevisto}: " styleClass="negrito"/>
+							<h:outputText value="#{managedBean.totalHorasPrevistas}"/>
+							<p:spacer width="15"/>
+							<h:outputText value="#{mensagem.totalRealizado}: " styleClass="negrito"/>
+							<h:outputText value="#{managedBean.totalHorasRealizadas}"/>
 						</div>
+
+						<p:chart type="line" model="#{managedBean.graficoLinha}" responsive="true" style="height:250px;"/>
+
+						<p:spacer height="50"/>
+
 						<div class="panel-body">
+							<div class="row">
+								<div class="col-lg-12 text-right">
+									<h:commandLink value="#{mensagem.exportar}">
+										<p:graphicImage value="/img/xls.png" width="24"/>
+										<p:dataExporter type="xls" target="dataTableRelatorio" fileName="zeus-report-web" />
+									</h:commandLink>
+								</div>
+							</div>
 							<div class="row">
 								<div class="col-lg-12">
 									<h:panelGroup id="relatorio" styleClass="table-responsive">
 										<p:dataTable id="dataTableRelatorio" value="#{managedBean.usuario.registros}" var="registro" paginator="false" tableStyleClass="table table-striped table-bordered table-hover tabelaRelatorio">
-											<p:columnGroup type="header">
-												<p:row>
-													<p:column rowspan="2" headerText="#{mensagem.data}" />
-													<p:column colspan="4" headerText="#{mensagem.horarioNormal}" />
-													<p:column colspan="2" headerText="#{mensagem.horarioAdicional}" />
-													<p:column rowspan="2" headerText="#{mensagem.totalDia}" />
-													<p:column rowspan="2" headerText="#{mensagem.previsto}" />
-													<p:column rowspan="2" headerText="#{mensagem.saldoDia}" />
-													<p:column rowspan="2" headerText="#{mensagem.acumulado}" />
-												</p:row>
-												<p:row>
-													<p:column headerText="#{mensagem.entrada}" />
-													<p:column headerText="#{mensagem.saida}" />
-													<p:column headerText="#{mensagem.entrada}" />
-													<p:column headerText="#{mensagem.saida}" />
-													<p:column headerText="#{mensagem.entrada}" />
-													<p:column headerText="#{mensagem.saida}" />
-												</p:row>
-											</p:columnGroup>
 											<p:column styleClass="text-left">
+												<f:facet name="header">
+													<h:outputText value="#{mensagem.data}"/>
+												</f:facet>
 												<h:outputText value="#{registro.diaSemana}, #{registro.dataFormatada}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="1.#{mensagem.entrada}"/>
+												</f:facet>
 												<h:outputText value="#{registro.horario1}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="1.#{mensagem.saida}"/>
+												</f:facet>
 												<h:outputText value="#{registro.horario2}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="2.#{mensagem.entrada}"/>
+												</f:facet>
 												<h:outputText value="#{registro.horario3}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="2.#{mensagem.saida}"/>
+												</f:facet>
 												<h:outputText value="#{registro.horario4}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="3.#{mensagem.entrada}"/>
+												</f:facet>
 												<h:outputText value="#{registro.horario5}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="3.#{mensagem.saida}"/>
+												</f:facet>
 												<h:outputText value="#{registro.horario6}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="#{mensagem.totalDia}"/>
+												</f:facet>
 												<h:outputText value="#{registro.totalDia}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="#{mensagem.previsto}"/>
+												</f:facet>
 												<h:outputText value="#{registro.horasPrevistas}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="#{mensagem.saldoDia}"/>
+												</f:facet>
 												<h:outputText value="#{registro.saldoDia}" rendered="#{registro.saldoDiaPositivo}" styleClass="positivo"/>
 												<h:outputText value="#{registro.saldoDia}" rendered="#{registro.saldoDiaNegativo}" styleClass="negativo"/>
 												<h:outputText value="#{registro.saldoDia}" rendered="#{!registro.saldoDiaPositivo and !registro.saldoDiaNegativo}"/>
 											</p:column>
 											<p:column styleClass="text-right">
+												<f:facet name="header">
+													<h:outputText value="#{mensagem.acumulado}"/>
+												</f:facet>
 												<h:outputText value="#{registro.saldoAcumulado}" rendered="#{registro.saldoAcumuladoPositivo}" styleClass="positivo"/>
 												<h:outputText value="#{registro.saldoAcumulado}" rendered="#{registro.saldoAcumuladoNegativo}" styleClass="negativo"/>
 												<h:outputText value="#{registro.saldoAcumulado}" rendered="#{!registro.saldoAcumuladoPositivo and !registro.saldoAcumuladoNegativo}"/>
 											</p:column>
 										</p:dataTable>
 									</h:panelGroup>
-								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-lg-12">
-									<h:outputText value="#{mensagem.totalPrevisto}: " styleClass="negrito"/>
-									<h:outputText value="#{managedBean.totalHorasPrevistas}"/>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-lg-12">
-									<h:outputText value="#{mensagem.totalRealizado}: " styleClass="negrito"/>
-									<h:outputText value="#{managedBean.totalHorasRealizadas}"/>
 								</div>
 							</div>
 

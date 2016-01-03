@@ -1,5 +1,6 @@
 package zeusreportweb.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,13 @@ import java.util.List;
  * Entidade para representar os usuários do Zeus.
  * @author Senio Caires
  */
-public class Usuario {
+public class Usuario implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 * @author Senio Caires
+	 */
+	private static final long serialVersionUID = -2084090696657677813L;
 
 	/**
 	 * Código do usuário.
