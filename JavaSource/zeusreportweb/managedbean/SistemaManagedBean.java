@@ -37,6 +37,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import com.sporeon.baseutil.ComparacaoUtil;
 import com.sporeon.baseutil.DataUtil;
 import com.sporeon.baseutil.ManipulacaoUtil;
 import com.sporeon.facesutil.util.JSFHelper;
@@ -44,6 +45,7 @@ import com.sporeon.facesutil.util.JSFHelper;
 import zeusreportweb.entity.Previsto;
 import zeusreportweb.entity.Registro;
 import zeusreportweb.entity.Usuario;
+import zeusreportweb.enumeracao.Perfil;
 import zeusreportweb.exception.ProjetoException;
 
 /**
@@ -97,6 +99,12 @@ public class SistemaManagedBean implements Serializable {
 	private String urlRelatorio;
 
 	/**
+	 * Perfil.
+	 * @author Senio Caires
+	 */
+	private Perfil perfil;
+
+	/**
 	 * Gráfico de linha.
 	 * @author Senio Caires
 	 */
@@ -110,6 +118,10 @@ public class SistemaManagedBean implements Serializable {
 	public void init() {
 
 		getUsuario().setLogin(getCookie("login").getValue());
+
+		if (!ComparacaoUtil.isVazio(getCookie("perfil").getValue())) {
+			setPerfil(Perfil.valueOf(getCookie("perfil").getValue()));
+		}
 
 		try {
 			setAno(Integer.valueOf(getCookie("ano").getValue()));
@@ -208,6 +220,8 @@ public class SistemaManagedBean implements Serializable {
 		setCookie("ano", getAno().toString(), -1);
 
 		setCookie("mes", getMes(), -1);
+
+		setCookie("perfil", getPerfil().toString(), -1);
 
 		Gson gson = new Gson();
 		setCookie("previstos", gson.toJson(getPrevistos(), PREVISTO_TYPE), -1);
@@ -672,10 +686,17 @@ public class SistemaManagedBean implements Serializable {
 
 			data = DataUtil.getData(dia, Integer.valueOf(DataUtil.getNumeroMes(getMes())) - 1, getAno());
 			calendar.setTime(data);
-			if (calendar.get(Calendar.DAY_OF_WEEK) != 1 && calendar.get(Calendar.DAY_OF_WEEK) != 7 && calendar.get(Calendar.DAY_OF_WEEK) != 4) {
-				getPrevistos().add(new Previsto(data, "08:30"));
-			} else if(calendar.get(Calendar.DAY_OF_WEEK) == 4) {
-				getPrevistos().add(new Previsto(data, "06:00"));
+
+			if (Perfil.PMMG.equals(getPerfil())) {
+				if (calendar.get(Calendar.DAY_OF_WEEK) != 1 && calendar.get(Calendar.DAY_OF_WEEK) != 7 && calendar.get(Calendar.DAY_OF_WEEK) != 4) {
+					getPrevistos().add(new Previsto(data, "08:30"));
+				} else if(calendar.get(Calendar.DAY_OF_WEEK) == 4) {
+					getPrevistos().add(new Previsto(data, "06:00"));
+				}
+			} else {
+				if (calendar.get(Calendar.DAY_OF_WEEK) != 1 && calendar.get(Calendar.DAY_OF_WEEK) != 7) {
+					getPrevistos().add(new Previsto(data, "08:00"));
+				}
 			}
 		}
 
@@ -1112,5 +1133,39 @@ public class SistemaManagedBean implements Serializable {
 	 */
 	public void setGraficoLinha(LineChartModel graficoLinha) {
 		this.graficoLinha = graficoLinha;
+	}
+
+	/**
+	 * Retorna a lista de perfis.
+	 * @author Senio Caires
+	 * @return {@link List}<{@link Perfil}>
+	 */
+	public List<Perfil> getPerfis() {
+
+		List<Perfil> retorno = new ArrayList<>();
+
+		for (Perfil perfil : Perfil.values()) {
+			retorno.add(perfil);
+		}
+
+		return retorno;
+	}
+
+	/**
+	 * Retorna o perfil.
+	 * @author Senio Caires
+	 * @return {@link Perfil}
+	 */
+	public Perfil getPerfil() {
+		return perfil;
+	}
+
+	/**
+	 * Altera o perfil.
+	 * @author Senio Caires
+	 * @param perfil
+	 */
+	public void setPerfil(Perfil perfil) {
+		this.perfil = perfil;
 	}
 }
