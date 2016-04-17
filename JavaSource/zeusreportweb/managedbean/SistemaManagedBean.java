@@ -2,12 +2,9 @@ package zeusreportweb.managedbean;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +34,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
@@ -48,6 +46,7 @@ import com.sporeon.facesutil.util.JSFHelper;
 import zeusreportweb.entity.Previsto;
 import zeusreportweb.entity.Registro;
 import zeusreportweb.entity.Usuario;
+import zeusreportweb.enumeracao.Mes;
 import zeusreportweb.enumeracao.Perfil;
 import zeusreportweb.exception.ProjetoException;
 
@@ -88,7 +87,7 @@ public class SistemaManagedBean implements Serializable {
    * Mês para gerar as datas previstas.
    * @author Senio Caires
    */
-  private String mes;
+  private Mes mes;
 
   /**
    * Ano para gerar as datas previstas.
@@ -129,18 +128,20 @@ public class SistemaManagedBean implements Serializable {
 
     try {
       setAno(Integer.valueOf(getCookie("ano").getValue()));
-      setMes(URLDecoder.decode(getCookie("mes").getValue(), "UTF-8"));
+      setMesConverter(getCookie("mes").getValue());
     } catch (NumberFormatException excecao) {
       setAno(getAnoAtual());
-      setMes(DataUtil.getMesPorExtenso(getMesAtual()));
-    } catch (UnsupportedEncodingException e) {
-      setAno(getAnoAtual());
-      setMes(DataUtil.getMesPorExtenso(getMesAtual()));
+      setMes(getMesAtualEnum());
     }
 
     Gson gson = new Gson();
 
-    this.previstos = gson.fromJson(getCookie("previstos").getValue(), PREVISTO_TYPE);
+    try {
+      this.previstos = gson.fromJson(getCookie("previstos").getValue(), PREVISTO_TYPE);
+    } catch (JsonSyntaxException excecao) {
+      this.previstos = new ArrayList<Previsto>();
+      setCookie("previstos", gson.toJson(getPrevistos(), PREVISTO_TYPE), -1);
+    }
   }
 
   /**
@@ -226,7 +227,7 @@ public class SistemaManagedBean implements Serializable {
 
     setCookie("ano", getAno().toString(), -1);
 
-    setCookie("mes", getMes(), -1);
+    setCookie("mes", getMes().name(), -1);
 
     setCookie("perfil", getPerfil().toString(), -1);
 
@@ -681,7 +682,7 @@ public class SistemaManagedBean implements Serializable {
 
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(DataUtil.getDataAtual());
-    int ultimoDiaMes = DataUtil.ultimoDiaDoMes(DataUtil.getData(1, Integer.valueOf(DataUtil.getNumeroMes(getMes())) - 1, getAno()));
+    int ultimoDiaMes = DataUtil.ultimoDiaDoMes(DataUtil.getData(1, getMes().getNumero() - 1, getAno()));
     Date data;
     this.previstos = new ArrayList<Previsto>();
 
@@ -691,7 +692,7 @@ public class SistemaManagedBean implements Serializable {
         break;
       }
 
-      data = DataUtil.getData(dia, Integer.valueOf(DataUtil.getNumeroMes(getMes())) - 1, getAno());
+      data = DataUtil.getData(dia, getMes().getNumero() - 1, getAno());
       calendar.setTime(data);
 
       if (Perfil.PMMG.equals(getPerfil())) {
@@ -733,18 +734,11 @@ public class SistemaManagedBean implements Serializable {
       }
     }
 
-    try {
-
-      if (cookie != null) {
-
-        cookie.setValue(URLEncoder.encode(valor, "UTF-8"));
-
-      } else {
-        cookie = new Cookie(nome, URLEncoder.encode(valor, "UTF-8"));
-        cookie.setPath(request.getContextPath());
-      }
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
+    if (cookie != null) {
+      cookie.setValue(valor);
+    } else {
+      cookie = new Cookie(nome, valor);
+      cookie.setPath(request.getContextPath());
     }
 
     cookie.setMaxAge(expiracao);
@@ -923,10 +917,10 @@ public class SistemaManagedBean implements Serializable {
 
   /**
    * @author Senio Caires
-   * @return {@link List}<{@link String}>
+   * @return {@link Mes}[]
    */
-  public List<String> getMeses() {
-    return DataUtil.mesPorExtensoList();
+  public Mes[] getMeses() {
+    return Mes.values();
   }
 
   /**
@@ -968,16 +962,12 @@ public class SistemaManagedBean implements Serializable {
 
   /**
    * @author Senio Caires
-   * @return {@link String}
+   * @return {@link Mes}
    */
-  public String getMes() {
+  public Mes getMes() {
 
     if (mes == null) {
-
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime(DataUtil.getDataAtual());
-
-      mes = DataUtil.getMesPorExtenso(calendar.get(Calendar.MONTH) + 1);
+      mes = getMesAtualEnum();
     }
 
     return mes;
@@ -987,8 +977,22 @@ public class SistemaManagedBean implements Serializable {
    * @author Senio Caires
    * @param mes
    */
-  public void setMes(String mes) {
+  public void setMes(Mes mes) {
     this.mes = mes;
+  }
+
+  /**
+   * @author Senio Caires
+   * @param mes
+   */
+  public void setMesConverter(String mes) {
+
+    for (Mes mesEnum : Mes.values()) {
+      if (mesEnum.name().equals(mes)) {
+        this.mes = mesEnum;
+        break;
+      }
+    }
   }
 
   /**
@@ -1101,6 +1105,25 @@ public class SistemaManagedBean implements Serializable {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(DataUtil.getDataAtual());
     return calendar.get(Calendar.MONTH) + 1;
+  }
+
+  /**
+   * @author Senio Caires
+   * @return {@link Mes}
+   */
+  public Mes getMesAtualEnum() {
+
+    final Integer mesAtual = getMesAtual();
+    Mes retorno = null;
+
+    for (Mes mesEnum : Mes.values()) {
+      if (mesEnum.getNumero().equals(mesAtual)) {
+        retorno = mesEnum;
+        break;
+      }
+    }
+
+    return retorno;
   }
 
   /**
