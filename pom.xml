@@ -51,14 +51,14 @@
       <artifactId>baseutil</artifactId>
       <version>1.0.0</version>
       <scope>system</scope>
-      <systemPath>${basedir}\src\main\webapp\WEB-INF\lib\baseutil.jar</systemPath>
+      <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/baseutil.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>com.sporeon.facesutil</groupId>
       <artifactId>facesutil</artifactId>
       <version>1.0.0</version>
       <scope>system</scope>
-      <systemPath>${basedir}\src\main\webapp\WEB-INF\lib\facesutil.jar</systemPath>
+      <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/facesutil.jar</systemPath>
     </dependency>
   </dependencies>
   <build>
